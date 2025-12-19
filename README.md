@@ -1,8 +1,8 @@
-1. Project Title
+Project Title: 
 Real-Time Fund Transfer & Audit Log System
 This project implements a simple peer-to-peer fund transfer application with an immutable audit logging mechanism.
 
-2. Project Description
+Project Description:
 This application allows users to transfer funds between accounts while ensuring that all transactions are processed atomically and recorded in a permanent audit log.
 The backend is developed using Spring Boot, which provides strong support for transactional operations and data integrity, making it suitable for financial applications. The frontend is built using React, enabling a responsive and interactive user interface.
 
