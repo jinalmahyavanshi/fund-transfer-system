@@ -1,143 +1,57 @@
-Overview
+1. Project Title
+Real-Time Fund Transfer & Audit Log System
+This project implements a simple peer-to-peer fund transfer application with an immutable audit logging mechanism.
 
-This project is a full-stack peer-to-peer fund transfer application designed to simulate real-time financial transactions while maintaining a mandatory, immutable audit log. The primary goal of this assignment is to demonstrate backend correctness, database transaction handling, auditability, and frontend integration, which are critical requirements in financial systems.
+2. Project Description
+This application allows users to transfer funds between accounts while ensuring that all transactions are processed atomically and recorded in a permanent audit log.
+The backend is developed using Spring Boot, which provides strong support for transactional operations and data integrity, making it suitable for financial applications. The frontend is built using React, enabling a responsive and interactive user interface.
 
-The system ensures that:
-Fund transfers are atomic (debit and credit occur together or not at all)
-Every transaction is permanently recorded
-The audit trail is immutable and tamper-proof
-The frontend reflects updates in real time
+Key Features:
+1.Atomic fund transfers (debit and credit happen together)
+2.Immutable transaction history for audit purposes
+3.Secure REST APIs
+4.Real-time balance and transaction updates on the frontend
 
-Technology Stack
-Backend: Node.js,Express.js,PostgreSQL,pg (PostgreSQL client),JWT (Authentication),CORS
-Frontend:React.js,Axios,Custom CSS
-Development Tools:VS Code,Postman,pgAdmin,Git & GitHub
+Challenges Faced:
+1.Ensuring data consistency during fund transfers
+2.Handling transaction failures without partial updates
+3.Synchronizing backend updates with frontend UI
 
-Project Setup & Execution
 
-Ensure the following are installed:
-Node.js (LTS),PostgreSQL,Git
+How to Install and Run the Project
+Prerequisites
+Make sure the following tools are installed on your system:
+1.Java (JDK 17 or compatible)
+2.Node.js (LTS version)
+3.PostgreSQL
+4.Git
 
-Clone the Repository
+Steps to Run the Project
+Clone the repository:
 git clone https://github.com/<your-username>/fund-transfer-audit-system.git
 cd fund-transfer-audit-system
 
-Database Configuration
-Create Database
-CREATE DATABASE fund_transfer_db;
 
-Create Tables
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  balance DECIMAL(10,2) DEFAULT 1000.00
-);
-
-CREATE TABLE transactions (
-  id SERIAL PRIMARY KEY,
-  sender_id INT REFERENCES users(id),
-  receiver_id INT REFERENCES users(id),
-  amount DECIMAL(10,2) NOT NULL,
-  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  status VARCHAR(10)
-);
-
-Insert Sample Users
-INSERT INTO users (username) VALUES ('user1'), ('user2');
-
-
-Backend Setup
+Start the backend:
 cd backend
-npm install
-node server.js
+./mvnw spring-boot:run
 
 
-Backend runs on:
-http://localhost:5000
-
-Frontend Setup
+Start the frontend:
 cd frontend
 npm install
 npm start
 
+The backend will run on http://localhost:5000
+The frontend will run on http://localhost:3000
 
-Frontend runs on:
-http://localhost:3000
+How to Use the Project
+1.Open the application in the browser.
+2.Login using a predefined user.
+3.Enter the receiver’s user ID and the amount to transfer.
+4.Submit the transfer request.
+5.View the updated balance and transaction history instantly.
+6.Review the immutable audit log in the transaction history section.
 
-API Documentation
-Authentication
-
-POST /login
-
-Request:
-
-{
-  "username": "user1"
-}
-
-
-Response:
-
-{
-  "token": "<JWT_TOKEN>",
-  "user": {
-    "id": 1,
-    "username": "user1",
-    "balance": 1000
-  }
-}
-
-Fund Transfer
-
-POST /transfer
-
-Request:
-
-{
-  "senderId": 1,
-  "receiverId": 2,
-  "amount": 500
-}
-
-
-Response:
-
-{
-  "message": "Transfer successful"
-}
-
-📜 Transaction History
-
-GET /history/:userId
-
-Headers:
-
-Authorization: Bearer <JWT_TOKEN>
-
-
-Response:
-
-[
-  {
-    "id": 1,
-    "sender_id": 1,
-    "receiver_id": 2,
-    "amount": 500,
-    "timestamp": "2025-12-19T12:44:01Z",
-    "status": "success"
-  }
-]
-
-Database Design
-Users Table
-Column	Description
-id	Primary key
-username	Unique user identifier
-balance	Current account balance
-Transactions Table (Audit Log)
-Column	Description
-sender_id	Sender user ID
-receiver_id	Receiver user ID
-amount	Transaction amount
-timestamp	Transaction date & time
-status	success / failed
+Final Note
+This project demonstrates core concepts required in financial systems such as transaction safety, auditability, and clean full-stack integration.
