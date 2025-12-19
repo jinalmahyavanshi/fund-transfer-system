@@ -1,70 +1,143 @@
-# Getting Started with Create React App
+Overview
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a full-stack peer-to-peer fund transfer application designed to simulate real-time financial transactions while maintaining a mandatory, immutable audit log. The primary goal of this assignment is to demonstrate backend correctness, database transaction handling, auditability, and frontend integration, which are critical requirements in financial systems.
 
-## Available Scripts
+The system ensures that:
+Fund transfers are atomic (debit and credit occur together or not at all)
+Every transaction is permanently recorded
+The audit trail is immutable and tamper-proof
+The frontend reflects updates in real time
 
-In the project directory, you can run:
+Technology Stack
+Backend: Node.js,Express.js,PostgreSQL,pg (PostgreSQL client),JWT (Authentication),CORS
+Frontend:React.js,Axios,Custom CSS
+Development Tools:VS Code,Postman,pgAdmin,Git & GitHub
 
-### `npm start`
+Project Setup & Execution
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Ensure the following are installed:
+Node.js (LTS),PostgreSQL,Git
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Clone the Repository
+git clone https://github.com/<your-username>/fund-transfer-audit-system.git
+cd fund-transfer-audit-system
 
-### `npm test`
+Database Configuration
+Create Database
+CREATE DATABASE fund_transfer_db;
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Create Tables
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  balance DECIMAL(10,2) DEFAULT 1000.00
+);
 
-### `npm run build`
+CREATE TABLE transactions (
+  id SERIAL PRIMARY KEY,
+  sender_id INT REFERENCES users(id),
+  receiver_id INT REFERENCES users(id),
+  amount DECIMAL(10,2) NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(10)
+);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Insert Sample Users
+INSERT INTO users (username) VALUES ('user1'), ('user2');
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Backend Setup
+cd backend
+npm install
+node server.js
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Backend runs on:
+http://localhost:5000
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Frontend Setup
+cd frontend
+npm install
+npm start
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Frontend runs on:
+http://localhost:3000
 
-## Learn More
+API Documentation
+Authentication
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+POST /login
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Request:
 
-### Code Splitting
+{
+  "username": "user1"
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
+Response:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+{
+  "token": "<JWT_TOKEN>",
+  "user": {
+    "id": 1,
+    "username": "user1",
+    "balance": 1000
+  }
+}
 
-### Making a Progressive Web App
+Fund Transfer
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+POST /transfer
 
-### Advanced Configuration
+Request:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+{
+  "senderId": 1,
+  "receiverId": 2,
+  "amount": 500
+}
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Response:
 
-### `npm run build` fails to minify
+{
+  "message": "Transfer successful"
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+📜 Transaction History
+
+GET /history/:userId
+
+Headers:
+
+Authorization: Bearer <JWT_TOKEN>
+
+
+Response:
+
+[
+  {
+    "id": 1,
+    "sender_id": 1,
+    "receiver_id": 2,
+    "amount": 500,
+    "timestamp": "2025-12-19T12:44:01Z",
+    "status": "success"
+  }
+]
+
+Database Design
+Users Table
+Column	Description
+id	Primary key
+username	Unique user identifier
+balance	Current account balance
+Transactions Table (Audit Log)
+Column	Description
+sender_id	Sender user ID
+receiver_id	Receiver user ID
+amount	Transaction amount
+timestamp	Transaction date & time
+status	success / failed
